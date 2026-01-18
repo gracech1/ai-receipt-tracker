@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flowbite Flask</title>
+    <!-- Viewing w/ Live Server -->
+    <link rel="stylesheet" href="./static/dist/output.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body class="min-h-full bg-fuchsia-800 text-slate-100">
+    <main class="mx-auto max-w-6xl px-4 py-8 space-y-8">
+      <!-- 1) Header -->
+      <header class="space-y-1">
+        <h1 class="text-3xl font-semibold">Dashboard</h1>
+        <p class="text-slate-300">AI-powered receipt tracker</p>
+      </header>
+      <!-- 2) Top row: upload/enter recipt -->
+      <section class="grid gap-6 md:grid-cols-2" items-stretch>
+        <!-- Upload card -->
+        <div class="flex items-center justify-center w-full h-full">
+          <label
+            for="dropzone-file"
+            class="flex flex-col items-center justify-center w-full min-h-64 h-full p-6 bg-neutral-secondary-medium border border-dashed border-default-strong rounded-base cursor-pointer hover:bg-neutral-tertiary-medium"
+          >
+            <div class="flex flex-col items-center justify-center text-body">
+              <svg
+                class="w-8 h-8 mb-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h3a3 3 0 0 0 0-6h-.025a5.56 5.56 0 0 0 .025-.5A5.5 5.5 0 0 0 7.207 9.021C7.137 9.017 7.071 9 7 9a4 4 0 1 0 0 8h2.167M12 19v-9m0 0-2 2m2-2 2 2"
+                />
+              </svg>
+              <p class="mb-2 text-sm">
+                <span class="font-semibold">Click to upload</span> or drag and
+                drop
+              </p>
+              <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+            </div>
+            <input id="dropzone-file" type="file" class="hidden" />
+          </label>
+        </div>
+        <!-- Manual entry card -->
+        <div
+          class="w-full min-h-64 h-full bg-neutral-primary-soft border border-default rounded-base shadow-xs p-6 flex flex-col"
+        >
+          <h2 class="text-lg font-medium text-heading mb-4">
+            Add receipt manually
+          </h2>
+
+          <form class="flex flex-col gap-4 flex-1">
+            <div>
+              <label class="block text-sm text-body mb-1">Description</label>
+              <input
+                class="block w-full bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs placeholder:text-body"
+              />
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label class="block text-sm text-body mb-1">Category</label>
+                <input
+                  class="block w-full bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs placeholder:text-body"
+                />
+              </div>
+              <div>
+                <label class="block text-sm text-body mb-1">Date</label>
+                <input
+                  type="date"
+                  class="w-full rounded-base bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs placeholder:text-body"
+                />
+              </div>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2 items-end">
+              <div>
+                <label class="block text-sm text-body mb-1">Amount</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  class="w-full rounded-base bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs placeholder:text-body"
+                />
+              </div>
+              <button
+                type="button"
+                class="text-white bg-success box-border border border-transparent hover:bg-success-strong focus:ring-4 focus:ring-success-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+              >
+                Success
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+      <!-- 3) Expenses table -->
+      <div
+        class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default"
+      >
+        <table class="w-full text-sm text-left rtl:text-right text-body">
+          <thead
+            class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium"
+          >
+            <tr>
+              <th scope="col" class="px-6 py-3 font-medium">Product name</th>
+              <th scope="col" class="px-6 py-3 font-medium">Color</th>
+              <th scope="col" class="px-6 py-3 font-medium">Category</th>
+              <th scope="col" class="px-6 py-3 font-medium">Price</th>
+              <th scope="col" class="px-6 py-3 font-medium">
+                <span class="sr-only">Edit</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium"
+            >
+              <th
+                scope="row"
+                class="px-6 py-4 font-medium text-heading whitespace-nowrap"
+              >
+                Apple MacBook Pro 17"
+              </th>
+              <td class="px-6 py-4">Silver</td>
+              <td class="px-6 py-4">Laptop</td>
+              <td class="px-6 py-4">$2999</td>
+              <td class="px-6 py-4 text-right">
+                <a href="#" class="font-medium text-fg-brand hover:underline"
+                  >Edit</a
+                >
+              </td>
+            </tr>
+            <tr
+              class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium"
+            >
+              <th
+                scope="row"
+                class="px-6 py-4 font-medium text-heading whitespace-nowrap"
+              >
+                Microsoft Surface Pro
+              </th>
+              <td class="px-6 py-4">White</td>
+              <td class="px-6 py-4">Laptop PC</td>
+              <td class="px-6 py-4">$1999</td>
+              <td class="px-6 py-4 text-right">
+                <a href="#" class="font-medium text-fg-brand hover:underline"
+                  >Edit</a
+                >
+              </td>
+            </tr>
+            <tr
+              class="bg-neutral-primary-soft hover:bg-neutral-secondary-medium"
+            >
+              <th
+                scope="row"
+                class="px-6 py-4 font-medium text-heading whitespace-nowrap"
+              >
+                Magic Mouse 2
+              </th>
+              <td class="px-6 py-4">Black</td>
+              <td class="px-6 py-4">Accessories</td>
+              <td class="px-6 py-4">$99</td>
+              <td class="px-6 py-4 text-right">
+                <a href="#" class="font-medium text-fg-brand hover:underline"
+                  >Edit</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4) Charts row -->
+      <section class="grid gap-6 md:grid-cols-2">
+        <div class="rounded-2xl bg-slate-800/60 p-6 border border-fuchsia-900">
+          <h2 class="text-lg font-medium mb-4">Pie chart</h2>
+          <canvas id="pieChart" height="140"></canvas>
+        </div>
+
+        <div class="rounded-2xl bg-slate-800/60 p-6 border border-fuchsia-900">
+          <h2 class="text-lg font-medium mb-4">Line chart</h2>
+          <canvas id="lineChart" height="140"></canvas>
+        </div>
+      </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
+  </body>
+</html>

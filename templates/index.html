@@ -230,14 +230,16 @@
         <div
           class="rounded-2xl bg-neutral-primary-soft p-6 border border-default"
         >
-          <h2 class="text-lg font-medium mb-4">Pie chart</h2>
-          <canvas id="pieChart" height="140"></canvas>
+          <h2 class="text-lg font-medium mb-4">Categories</h2>
+          <div class="h-140 w-full">
+            <canvas id="pieChart" height="420"></canvas>
+          </div>
         </div>
         <div
           class="rounded-2xl bg-neutral-primary-soft p-6 border border-default"
         >
-          <h2 class="text-lg font-medium mb-4">Line chart</h2>
-          <canvas id="lineChart" height="140"></canvas>
+          <h2 class="text-lg font-medium mb-4">Spending By Day</h2>
+          <canvas id="barChart" height="250"></canvas>
         </div>
         <script>
           const catLabels = {{(cat_labels or []) | tojson}}
@@ -245,45 +247,49 @@
           const dayLabels = {{(day_labels or []) | tojson}}
           const dayValues = {{(day_values or []) | tojson}}
 
-          // Cat Chart
+          // Pie Chart
           if (document.getElementById('pieChart')){
             const catCtx = document.getElementById('pieChart').getContext('2d');
             new Chart(catCtx, {
               type: 'pie',
-              data: {labels: catLabels, datasets: [{data: catValues}]},
-              options: {plugins: {legend: {labels: {color: '#cbd5e1'}}}}
+              data: { labels: catLabels, datasets: [{ data: catValues }] },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false, 
+                plugins: { legend: { labels: { color: '#000000' } } }
+              }
             })
           }
 
-          // Day Chart
-          if (document.getElementById('lineChart')){
-            const ctx = document.getElementById('lineChart');
-
-            new Chart(ctx, {
-              type: "line",
-              data: {
-                labels: xValues,
-                datasets: [{
-                  fill: false,
-                  lineTension: 0,
-                  backgroundColor: "rgba(0,0,255,1.0)",
-                  borderColor: "rgba(0,0,255,0.1)",
-                  data: yValues
-                }]
-              },
-              options: {
-                plugins: {
-                  legend: {display:false},
-                  title: {
-                    display: true,
-                    text: "House Prices vs. Size",
-                    font: {size:16}
+          // Bar Chart
+        if (document.getElementById('barChart')){
+          const dayCtx = document.getElementById('barChart').getContext('2d');
+          new Chart(dayCtx, {
+            type: 'bar',
+            data: {
+              labels: dayLabels,
+              datasets: [{
+                label: 'Total',
+                data: dayValues
+              }]
+            },
+            options: {
+              plugins: {
+              legend: {
+                labels: {
+                  color: '#000000'
                   }
                 }
+              },
+
+              scales: {
+                x: {ticks: {color: '#000000'}, grid: {color: '#cccccc'}},
+                y: {ticks: {color: '#000000'}, grid: {color: '#cccccc'}}
               }
-            });
-          }
-        </script>
+            }
+          })
+        }
+      </script>
       </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>

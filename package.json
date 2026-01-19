@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/cli": "^4.1.18",
     "flowbite": "^4.0.1",
+    "simple-datatables": "^10.2.0",
     "tailwindcss": "^4.1.18"
   }
 }

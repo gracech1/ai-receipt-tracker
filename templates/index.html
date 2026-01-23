@@ -21,38 +21,56 @@
       <!-- 2) Top row: upload/enter recipt -->
       <section class="grid gap-6 md:grid-cols-2" items-stretch>
         <!-- Upload card -->
-        <div class="flex items-center justify-center w-full h-full">
-          <label
-            for="dropzone-file"
-            class="flex flex-col items-center justify-center w-full min-h-64 h-full p-6 bg-neutral-secondary-medium border border-dashed border-default-strong rounded-base cursor-pointer hover:bg-neutral-tertiary-medium"
+        <div class="flex flex-col w-full h-full gap-3">
+          <div
+            class="relative w-full min-h-64 h-full p-6 bg-neutral-secondary-medium border border-dashed border-default-strong rounded-base hover:bg-neutral-tertiary-medium"
           >
-            <div class="flex flex-col items-center justify-center text-body">
-              <svg
-                class="w-8 h-8 mb-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 17h3a3 3 0 0 0 0-6h-.025a5.56 5.56 0 0 0 .025-.5A5.5 5.5 0 0 0 7.207 9.021C7.137 9.017 7.071 9 7 9a4 4 0 1 0 0 8h2.167M12 19v-9m0 0-2 2m2-2 2 2"
-                />
-              </svg>
-              <p class="mb-2 text-sm">
-                <span class="font-semibold">Click to upload</span> or drag and
-                drop
+            <!-- The clickable dropzone area -->
+            <label
+              for="dropzone-file"
+              class="flex flex-col items-center justify-center w-full h-full cursor-pointer"
+            >
+              <!-- Instructions -->
+              <div id="dropzone-instructions" class="flex flex-col items-center justify-center text-body">
+                Upload JPG or PNG receipt
+              </div>
+              <input
+                id="dropzone-file"
+                type="file"
+                name="file"
+                accept="image/png,image/jpeg"
+                class="hidden"
+              />
+            </label>
+
+            <!-- Selected overlay -->
+            <div
+              id="dropzone-selected"
+              class="absolute inset-0 hidden flex-col items-center justify-center gap-3 pointer-events-none"
+            >
+              <p class="text-sm text-body">
+                Selected:
+                <span id="selected-filename" class="font-semibold text-heading"></span>
               </p>
-              <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+
+              <button
+                id="upload-btn"
+                type="button"
+                class="pointer-events-auto text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none disabled:opacity-50 inline-flex items-center gap-2"
+                disabled
+              >
+                <span
+                  id="upload-spinner"
+                  class="hidden h-5 w-5 animate-spin rounded-full border-[3px] border-slate-900 border-t-transparent"
+                  aria-hidden="true"
+                ></span>
+                <span id="upload-btn-text">Upload</span>
+              </button>
+
             </div>
-            <input id="dropzone-file" type="file" class="hidden" />
-          </label>
+          </div>
         </div>
+
         <!-- Manual entry card -->
         <div
           class="w-full min-h-64 h-full bg-neutral-primary-soft border border-default rounded-base shadow-xs p-6 flex flex-col"
@@ -69,6 +87,7 @@
               <label class="block text-sm text-body mb-1">Description</label>
               <input
                 name="description" required
+                id="manual_description"
                 placeholder="e.g., Tataki"
                 class="block w-full bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs placeholder:text-body"
               />
@@ -90,6 +109,7 @@
                 <label class="block text-sm text-body mb-1">Date</label>
                 <input
                   name="date" required
+                  id="manual_date"
                   value="{{today}}"
                   type="date"
                   class="w-full rounded-base bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs placeholder:text-body"
@@ -102,6 +122,7 @@
                 <label class="block text-sm text-body mb-1">Amount</label>
                 <input
                   name="amount" required
+                  id="manual_amount"
                   type="number"
                   step="0.01"
                   min="0.01"
@@ -120,7 +141,7 @@
         </div>
       </section>
 
-      <!-- 3) Expenses table -->
+      <!-- 3) Expenses table filters -->
       <section
         class="rounded-2xl bg-neutral-primary-soft p-6 border border-default space-y-4"
       >
@@ -186,6 +207,7 @@
           </div>
         </div>
 
+        <!-- Actual expenses table -->
         <div
           class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default"
         >
@@ -307,6 +329,78 @@
         </script>
       </section>
     </main>
+    <script>
+      // Get all the elements
+      const spinnerEl = document.getElementById("upload-spinner");
+      const uploadTextEl = document.getElementById("upload-btn-text");
+      const fileInput = document.getElementById("dropzone-file");
+      const uploadBtn = document.getElementById("upload-btn");
+      const instructions = document.getElementById("dropzone-instructions");
+      const selectedOverlay = document.getElementById("dropzone-selected");
+      const filenameSpan = document.getElementById("selected-filename");
+
+      // Get manual entry fields
+      const descEl = document.getElementById("manual_description");
+      const dateEl = document.getElementById("manual_date");
+      const amountEl = document.getElementById("manual_amount");
+
+      let file = null;
+
+      // When user selects file
+      fileInput.addEventListener("change", () => {
+        file = fileInput.files?.[0] || null;
+        if (!file) return;
+
+        filenameSpan.textContent = file.name;
+        instructions.classList.add("hidden");
+        selectedOverlay.classList.remove("hidden");
+        selectedOverlay.classList.add("flex");
+        uploadBtn.disabled = false;
+      });
+
+      // When user clicks upload
+      uploadBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!file) return;
+
+      uploadBtn.disabled = true;
+      spinnerEl.classList.remove("hidden");
+      uploadTextEl.textContent = "Uploading...";
+
+      try {
+        const fd = new FormData();
+        fd.append("file", file);
+
+        const resp = await fetch("/upload", { method: "POST", body: fd });
+
+        let data = {};
+        try {
+          data = await resp.json();
+        } catch {
+          data = { error: "Non-JSON response from server" };
+        }
+
+        if (resp.ok) {
+          descEl.value = data.establishment || "";
+
+          const rawDate = (data.date || data.dateISO || "").trim();
+          dateEl.value = rawDate.split("T")[0].split(" ")[0];
+
+          if (data.total != null) amountEl.value = data.total;
+        } else {
+          console.error(data.error || "Upload failed");
+        }
+      } finally {
+        spinnerEl.classList.add("hidden");
+        uploadTextEl.textContent = "Upload";
+        uploadBtn.disabled = false;
+      }
+    });
+
+    </script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
   </body>
 </html>

@@ -1,18 +1,25 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response
+from flask import Flask, flash, redirect, render_template, request, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime
 from sqlalchemy import func
+from dotenv import load_dotenv
+from tabscanner import process_receipt
 import os
+import tempfile
+import time
+
+load_dotenv()
 
 app = Flask(__name__)
 
-# In production, set the SECRET_KEY env var; for development generate one.
+# secret key variable
 app.config['SECRET_KEY'] = "my-secret-key"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///expenses.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# makes database
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(120), nullable=False)
@@ -26,6 +33,7 @@ with app.app_context():
 
 CATEGORIES = ['Food', 'Transport', 'Utilities', 'Entertainment', 'Other']
 
+# helper to parse date
 def parse_date_or_none(s: str):
     if not s:
         return None
@@ -34,6 +42,7 @@ def parse_date_or_none(s: str):
     except ValueError:
         return None
 
+# home page
 @app.route('/')
 def index():
     # read query string
@@ -112,6 +121,7 @@ def add():
     category = (request.form.get('category') or "").strip()
     date_str = (request.form.get('date') or "").strip()
 
+    # validation
     if not description or not amount or not category:
         flash("Please fill description, amount, and category", "error")
         return redirect(url_for('index'))
@@ -130,6 +140,7 @@ def add():
     except ValueError:
         d = date.today()
     
+    # adding entry
     e = Expense(description=description, amount=amount, category=category, date=d)
     db.session.add(e)
     db.session.commit()
@@ -137,6 +148,7 @@ def add():
     flash("Expense added successfully!", "success")
     return redirect(url_for('index'))
 
+# delete entry
 @app.route('/delete/<int:expense_id>', methods=['POST'])
 def delete(expense_id):
     e = Expense.query.get_or_404(expense_id)
@@ -144,6 +156,43 @@ def delete(expense_id):
     db.session.commit()
     flash("Expense deleted successfully!", "success")
     return redirect(url_for('index'))
+
+# tabscanner API
+@app.route("/upload", methods=["POST"])
+def upload():
+    f = request.files.get("file")
+    if not f:
+        return jsonify({"error": "No file uploaded"}), 400
+    
+    # save to temp file
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(f.filename)[1])
+    f.save(tmp.name)
+    tmp.close()
+
+    # process receipt
+    """
+    result = process_receipt(tmp.name)
+    if not result:
+        return jsonify({"error": "Failed to process receipt"}), 500
+    
+    os.remove(tmp.name)
+
+    establishment = result["establishment"]
+    date = result["date"]
+    total = result["total"]
+
+    # Mock Tabscanner response
+    return jsonify({
+        "establishment": establishment,
+        "date": date,
+        "total": total
+    """
+    time.sleep(2)  # simulate processing delay
+    return jsonify({
+        "establishment": "Demo Store",
+        "date": "2024-06-15",
+        "total": 42.50
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

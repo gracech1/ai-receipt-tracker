@@ -12,7 +12,5 @@ One of my new year's resolutions is to track my spending more responsibly. This 
 ## 3) Time Spent Developing
 Spent about 20 hours starting from last week! 
 
-## 4) How to Run / Demo
-
-### Option B: Working Video Demo
-- Video link: [<!-- YouTube or other video link -->](https://youtu.be/1G7LmiZL3lI)
+## 4) Working Video Demo
+ [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/1G7LmiZL3lI/0.jpg)](https://www.youtube.com/watch?v=1G7LmiZL3lI)

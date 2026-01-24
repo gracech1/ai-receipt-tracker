@@ -4,7 +4,7 @@
 One of my new year's resolutions is to track my spending more responsibly. This receipt-tracking application helps me to easily store and analyze my spending with an interactive dashbaord.
 
 ## 2) Features Included
-- Adding entries and deleting entries from a table (integration with database)
+- Adding entries and deleting entries from a table (Integration with database)
 - Parsing information out of receipts and autofilling it into the dashboard (API calls)
 - Checks to ensure that user has filled out forms correctly 
 - UI for a table which can be filtered based on date range and category (Frontend components)

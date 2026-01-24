@@ -170,7 +170,6 @@ def upload():
     tmp.close()
 
     # process receipt
-    """
     result = process_receipt(tmp.name)
     if not result:
         return jsonify({"error": "Failed to process receipt"}), 500
@@ -181,17 +180,11 @@ def upload():
     date = result["date"]
     total = result["total"]
 
-    # Mock Tabscanner response
+    # Tabscanner response
     return jsonify({
         "establishment": establishment,
         "date": date,
         "total": total
-    """
-    time.sleep(2)  # simulate processing delay
-    return jsonify({
-        "establishment": "Demo Store",
-        "date": "2024-06-15",
-        "total": 42.50
     })
 
 if __name__ == '__main__':

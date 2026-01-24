@@ -9,7 +9,7 @@ One of my new year's resolutions is to track my spending more responsibly. This 
 - Checks to ensure that user has filled out forms correctly 
 - UI for a table which can be filtered based on date range and category (Frontend components)
 - Responsive charts that show spending in different categories and over time (Frontend components)
-- Links Python Flask app with HTML/CSS/Javascript (Linking together a frontend framwork with a backend framework)
+- Links Python Flask app with HTML/CSS/Javascript (Linking together a frontend framework with a backend framework)
 - Allows for screen size changes (Mobile Responsiveness)
 
 ## 3) Time Spent Developing

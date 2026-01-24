@@ -16,4 +16,4 @@ One of my new year's resolutions is to track my spending more responsibly. This 
 Spent about 20 hours starting from last week! 
 
 ## 4) Working Video Demo
- [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/1G7LmiZL3lI/0.jpg)](https://www.youtube.com/watch?v=1G7LmiZL3lI)
+ [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/3H8sIssBVvI/0.jpg)](https://www.youtube.com/watch?v=3H8sIssBVvI)
